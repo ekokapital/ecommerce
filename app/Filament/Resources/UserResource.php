@@ -59,7 +59,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()->slideOver(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),                    
                 ])
