@@ -16,6 +16,7 @@ use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\OrdersRelationManager;
 use Filament\Forms\Components\TextInput;
 
 class UserResource extends Resource
@@ -75,7 +76,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OrdersRelationManager::class
         ];
     }
 

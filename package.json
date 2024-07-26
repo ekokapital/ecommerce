@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "start": "concurrently \"php artisan config:clear\" \"php artisan cache:clear\" \"npm run dev\" \"php artisan serve\" ",
+        "start": "concurrently \"php artisan config:clear\" \"php artisan cache:clear\" \"php artisan serve\" \"npm run dev\" ",
         "dev": "vite",
         "build": "vite build"
     },

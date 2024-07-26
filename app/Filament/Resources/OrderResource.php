@@ -9,25 +9,26 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Number;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\SelectColumn;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
-use Filament\Forms\Components\Hidden;
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\OrderResource\RelationManagers\AddressRelationManager;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function form(Form $form): Form
@@ -60,11 +61,11 @@ class OrderResource extends Resource
                             ->default('new')
                             ->required()
                             ->options(([
-                                'new' => 'Pending',
-                                'processing' => 'Paid',
+                                'new' => 'New',
+                                'processing' => 'Processing',
                                 'shipped' => 'Shipped',
                                 'delivered' => 'Delivered',
-                                'canceled' => 'Canceled',
+                                'cancelled' => 'Cancelled',
                             ]))
                             ->colors([
                                 'new' => 'info',
@@ -132,10 +133,10 @@ class OrderResource extends Resource
                                     ->required()
                                     ->columnSpan(3),
                             ])->columns(12),
-                            Placeholder::make('grand_total')
-                                ->label('Grand Total')
+                            Placeholder::make('grand_total_placeholder')
+                                ->label('Grand Total :  ')
                                 ->content(function(Get $get, Set $set){
-                                    $total =0;
+                                    $total = 0;
                                     if(!$repeaters = $get('items')){
                                         return $total;
                                     }
@@ -143,7 +144,7 @@ class OrderResource extends Resource
                                         $total += $get("items.{$key}.total_amount");
                                     }
                                     $set('grand_total', $total);
-                                    return Number::currency($total, 'IDR');
+                                    return \Illuminate\Support\Number::currency($total, 'IDR');
                                 }),
                                 Hidden::make('grand_total')
                                     ->default(0)
@@ -157,16 +158,32 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.name'),
-                TextColumn::make('status'),
-                TextColumn::make('grand_total'),
+                TextColumn::make('user.name')->label('Customer'),
+                TextColumn::make('grand_total')->numeric()->money('IDR'),
+                TextColumn::make('payment_method')->sortable()->searchable(),
+                TextColumn::make('payment_status')->sortable()->searchable(),
+                TextColumn::make('currency')->sortable()->searchable(),
+                TextColumn::make('shipping_method')->sortable()->searchable(),
+                SelectColumn::make('status')->sortable()->searchable()
+                ->options([
+                    'new' => 'New',
+                    'processing' => 'Processing',
+                    'shipped' => 'Shipped',
+                    'delivered' => 'Delivered',
+                    'cancelled' => 'Cancelled',
+                ]),
+                TextColumn::make('created_at')->sortable()->dateTime()->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('updated_at')->sortable()->dateTime()->toggleable(isToggledHiddenByDefault:true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make()->slideOver(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -178,8 +195,18 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AddressRelationManager::class
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return static::getModel()::count() > 5? 'success' : 'warning';
     }
 
     public static function getPages(): array
@@ -192,3 +219,5 @@ class OrderResource extends Resource
         ];
     }
 }
+
+// https://www.youtube.com/watch?v=WnY8q0dXBR4
