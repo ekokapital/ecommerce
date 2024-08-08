@@ -14,7 +14,7 @@ class LatestOrder extends BaseWidget
     {
         return $table
             ->query(OrderResource::getEloquentQuery())
-            ->defaultPaginationPageOption(2)
+            ->defaultPaginationPageOption(6)
             ->defaultSort('created_at', 'desc')
             
             ->columns([

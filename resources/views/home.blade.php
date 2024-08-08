@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>StagingApp Landing Page</title>
+	<title>e-Commerce</title>
 	<meta name="description" content="">
 	<meta name="keywords" content="">
 
@@ -65,7 +65,7 @@
                 -70 -57 60 c-165 176 -249 425 -238 705 9 224 71 415 201 609 262 393 730 581 1120 450 32 -11 61 -18 64 -15 8 8 -21 44 -113 141 l-85 90 30 -84z"/>
                 </g>
                 </svg>
-                 STAGING-APP
+                 e-Commerce with Filament
 			</a>
 			
 			<div class="flex w-1/2 justify-end content-center text-xl">
